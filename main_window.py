@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import filedialog
+from tkinter import filedialog, colorchooser
 
 from PIL import ImageTk
 from qrcode.image.styles.moduledrawers import *
@@ -10,6 +10,8 @@ from qr import generate_qr
 class MainWindow(Tk):
     logo_img = None
     module_driver = SquareModuleDrawer()
+    back_color = (255, 255, 255)
+    fill_color = (0, 0, 0)
 
     def __init__(self):
         Tk.__init__(self)
@@ -51,7 +53,7 @@ class MainWindow(Tk):
         self.img_panel = Canvas(bg=self.element_bg, width=330, height=70,
                                 highlightthickness=0, highlightbackground=self.font_color)
         self.img_panel.place(x=1160, y=170)
-# Кнопки-логотипы
+        # Кнопки-логотипы
         vk = ImageTk.PhotoImage(Image.open('images/VK.png').resize((40, 40)))
 
         self.VK_button = Button(bd=2, width=40, height=40, image=vk, command=lambda: self.change_logo('images/VK.png'))
@@ -101,7 +103,7 @@ class MainWindow(Tk):
 
         self.pattern_label = Label(bg=self.win_bg, text="● Шаблон QR-кода", fg=self.font_color, font=self.font_font10)
         self.pattern_label.place(x=20, y=80)
-# Кнопки-шаблоны
+        # Кнопки-шаблоны
         horizontal_bars_image = ImageTk.PhotoImage(Image.open('images/Horizontal.png').resize((40, 40)))
 
         self.HorizontalBarsDrawer_button = Button(bd=2, width=40, height=40, image=horizontal_bars_image,
@@ -140,19 +142,19 @@ class MainWindow(Tk):
         self.GappedSquareModuleDrawer_button.place(x=290, y=115)
 
         self.color_label = Label(bg=self.win_bg, text="● Цвет", fg=self.font_color, font=self.font_font10)
-        self.color_label.place(x=20, y=160)
+        self.color_label.place(x=20, y=165)
 
-        self.back_color = Label(bg=self.win_bg, text="Фон #", fg=self.font_color, font=self.font_font8)
-        self.back_color.place(x=15, y=190)
+        self.back_color_label = Label(bg=self.win_bg, text="Фон", fg=self.font_color, font=self.font_font8)
+        self.back_color_label.place(x=15, y=195)
 
-        self.back_color_entry = Entry(bg=self.element_bg, fg=self.font_color, bd=0, font=self.font_font10, width=6)
-        self.back_color_entry.place(x=50, y=193)
+        self.back_color_button = Button(bd=2, width=5, height=2, bg='#fff', command=self.back_color_button_click)
+        self.back_color_button.place(x=50, y=193)
 
-        self.fill_color = Label(bg=self.win_bg, text="Передний план #", fg=self.font_color, font=self.font_font8)
-        self.fill_color.place(x=180, y=190)
+        self.fill_color_label = Label(bg=self.win_bg, text="Передний план", fg=self.font_color, font=self.font_font8)
+        self.fill_color_label.place(x=180, y=190)
 
-        self.fill_color_entry = Entry(bg=self.element_bg, fg=self.font_color, bd=0, font=self.font_font10, width=6)
-        self.fill_color_entry.place(x=275, y=193)
+        self.fill_color_button = Button(bd=2, width=5, height=2, bg='#000', command=self.fill_color_button_click)
+        self.fill_color_button.place(x=275, y=193)
 
         self.mainloop()
 
@@ -177,7 +179,7 @@ class MainWindow(Tk):
 
     def update_qr(self):
         img = generate_qr(self.text_box.get("1.0", END), module_driver=self.module_driver,
-                          fill_color_param='black', back_color_param='white', image=self.logo_img)
+                          fill_color_param=self.fill_color, back_color_param=self.back_color, image=self.logo_img)
         img = img.resize((500, 500))
         img = ImageTk.PhotoImage(img)
         self.qr_panel.create_image(0, 0, anchor=NW, image=img)
@@ -186,11 +188,25 @@ class MainWindow(Tk):
         self.update_qr()
 
     def save_button_click(self):
-        file_name = filedialog.asksaveasfilename(defaultextension='.png')
+        file_name = filedialog.asksaveasfilename(defaultextension='.png', filetypes=[('PNG', '.png'), ('JPG', '.jpg'),
+                                                                                     ('BMP', '.bmp')])
         generate_qr(self.text_box.get("1.0", END), module_driver=self.module_driver,
-                    fill_color_param='black', back_color_param='white', image=self.logo_img).save(file_name)
+                    fill_color_param=self.fill_color, back_color_param=self.back_color, image=self.logo_img).save(file_name)
 
     def load_image_button_click(self):
         file_name = filedialog.askopenfilename(filetypes=[("Файлы изображений", '.png .jpg .jpeg')])
-        self.logo_img = file_name
+        if file_name is not None:
+            self.logo_img = file_name
+            self.update_qr()
+
+    def back_color_button_click(self):
+        (rgb, hex) = colorchooser.askcolor()
+        self.back_color_button.configure(bg=hex)
+        self.back_color = rgb
+        self.update_qr()
+
+    def fill_color_button_click(self):
+        (rgb, hex) = colorchooser.askcolor()
+        self.fill_color_button.configure(bg=hex)
+        self.fill_color = rgb
         self.update_qr()
