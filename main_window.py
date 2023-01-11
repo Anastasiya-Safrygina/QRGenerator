@@ -150,13 +150,13 @@ class MainWindow(Tk):
         self.back_color_label = Label(bg=self.win_bg, text="Фон", fg=self.font_color, font=self.font_font8)
         self.back_color_label.place(x=15, y=195)
 
-        self.back_color_button = Button(bd=2, width=5, height=2, bg='#fff', command=self.back_color_button_click)
+        self.back_color_button = Button(bd=0, width=5, height=2, bg='#fff', command=self.back_color_button_click)
         self.back_color_button.place(x=50, y=193)
 
         self.fill_color_label = Label(bg=self.win_bg, text="Передний план", fg=self.font_color, font=self.font_font8)
         self.fill_color_label.place(x=180, y=190)
 
-        self.fill_color_button = Button(bd=2, width=5, height=2, bg='#000', command=self.fill_color_button_click)
+        self.fill_color_button = Button(bd=0, width=5, height=2, bg='#000', command=self.fill_color_button_click)
         self.fill_color_button.place(x=275, y=193)
 
         self.color_mask_value = IntVar()
@@ -222,13 +222,9 @@ class MainWindow(Tk):
         self.update_qr()
 
     def save_button_click(self):
-        file_name = filedialog.asksaveasfilename(defaultextension='.png', filetypes=[('PNG', '.png'), ('JPG', '.jpg'),
+        file_name = filedialog.asksaveasfilename(defaultextension='.png', filetypes=[('PNG', '.png'),
+                                                                                     ('JPG', '.jpg'),
                                                                                      ('BMP', '.bmp')])
-        if file_name is not None:
-            generate_qr(self.text_box.get("1.0", END), module_driver=self.module_driver,
-                        color_mask=self.color_mask, image=self.logo_img).save(file_name)
-            self.update_qr()
-
     def load_image_button_click(self):
         file_name = filedialog.askopenfilename(filetypes=[("Файлы изображений", '.png .jpg .jpeg')])
         if file_name is not None:
