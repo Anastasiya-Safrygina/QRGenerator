@@ -199,33 +199,10 @@ class MainWindow(Tk):
                                                            selectcolor='black', variable=self.color_mask_value, value=5,
                                                            command=self.change_color_mask)
         self.VerticalGradiantColorMask_radio.place(x=180, y=300)
-        self.SolidFillColorMask_radio = Radiobutton(text="Два цвета", bg=self.win_bg, fg=self.font_color,
-                                                    selectcolor='black', variable=self.color_mask_value, value=1,
-                                                    command=self.change_color_mask)
-        self.SolidFillColorMask_radio.place(x=20, y=220)
-        self.RadialGradiantColorMask_radio = Radiobutton(text="Радиальный", bg=self.win_bg, fg=self.font_color,
-                                                         selectcolor='black', variable=self.color_mask_value, value=2,
-                                                         command=self.change_color_mask)
-        self.RadialGradiantColorMask_radio.place(x=20, y=240)
-        self.SquareGradiantColorMask_radio = Radiobutton(text="Квадратный", bg=self.win_bg, fg=self.font_color,
-                                                         selectcolor='black', variable=self.color_mask_value, value=3,
-                                                         command=self.change_color_mask)
-        self.SquareGradiantColorMask_radio.place(x=20, y=260)
-        self.HorizontalGradiantColorMask_radio = Radiobutton(text="Горизонтальный", bg=self.win_bg, fg=self.font_color,
-                                                             selectcolor='black', variable=self.color_mask_value,
-                                                             value=4, command=self.change_color_mask)
-        self.HorizontalGradiantColorMask_radio.place(x=20, y=280)
-        self.VerticalGradiantColorMask_radio = Radiobutton(text="Вертикальный", bg=self.win_bg, fg=self.font_color,
-                                                           selectcolor='black', variable=self.color_mask_value, value=5,
-                                                           command=self.change_color_mask)
-        self.VerticalGradiantColorMask_radio.place(x=20, y=300)
 
         self.gradiant_color_label = Label(bg=self.win_bg, text="Цвет 2:", fg=self.font_color, font=("Cascadia Code", 9))
         self.gradiant_color_label.place(x=15, y=305)
 
-        self.gradiant_color_button = Button(bd=2, width=5, height=2, bg='#000',
-                                            command=self.gradiant_color_button_click)
-        self.gradiant_color_button.place(x=275, y=260)
         self.gradiant_color_button = Button(bd=0, width=5, height=2, bg='#000000',
                                             command=self.gradiant_color_button_click)
         self.gradiant_color_button.place(x=70, y=300)
@@ -237,21 +214,6 @@ class MainWindow(Tk):
         self.update_qr()
 
     def change_color_mask(self):
-        val = self.color_mask_value.get()
-        if val == 1:
-            self.color_mask = SolidFillColorMask(back_color=self.back_color, front_color=self.fill_color)
-        elif val == 2:
-            self.color_mask = RadialGradiantColorMask(back_color=self.back_color, center_color=self.fill_color,
-                                                      edge_color=self.gradiant_color)
-        elif val == 3:
-            self.color_mask = SquareGradiantColorMask(back_color=self.back_color, center_color=self.fill_color,
-                                                      edge_color=self.gradiant_color)
-        elif val == 4:
-            self.color_mask = HorizontalGradiantColorMask(back_color=self.back_color, left_color=self.fill_color,
-                                                          right_color=self.gradiant_color)
-        elif val == 5:
-            self.color_mask = VerticalGradiantColorMask(back_color=self.back_color, top_color=self.fill_color,
-                                                        bottom_color=self.gradiant_color)
         self.update_qr()
 
     def change_module_driver(self, driver_name):
@@ -276,6 +238,15 @@ class MainWindow(Tk):
         elif val == 2:
             self.color_mask = RadialGradiantColorMask(back_color=self.back_color, center_color=self.fill_color,
                                                       edge_color=self.gradiant_color)
+        elif val == 3:
+            self.color_mask = SquareGradiantColorMask(back_color=self.back_color, center_color=self.fill_color,
+                                                      edge_color=self.gradiant_color)
+        elif val == 4:
+            self.color_mask = HorizontalGradiantColorMask(back_color=self.back_color, left_color=self.fill_color,
+                                                          right_color=self.gradiant_color)
+        elif val == 5:
+            self.color_mask = VerticalGradiantColorMask(back_color=self.back_color, top_color=self.fill_color,
+                                                        bottom_color=self.gradiant_color)
 
         img = generate_qr(self.text_box.get("1.0", END), module_driver=self.module_driver,
                           color_mask=self.color_mask, image=self.logo_img)
@@ -297,9 +268,6 @@ class MainWindow(Tk):
         if file_name is not None:
             generate_qr(self.text_box.get("1.0", END), module_driver=self.module_driver,
                         color_mask=self.color_mask, image=self.logo_img).save(file_name)
-
-                                                                                     ('BMP', '.bmp'),
-                                                                                     ('JPEG', '.jpeg')])
 
     def load_image_button_click(self):
         file_name = filedialog.askopenfilename(filetypes=[("Файлы изображений", '.png .jpg .jpeg')])
