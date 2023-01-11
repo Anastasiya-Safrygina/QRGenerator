@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import filedialog, colorchooser
 
 from PIL import ImageTk
+from qrcode.image.styles.colormasks import SolidFillColorMask, RadialGradiantColorMask
 from qrcode.image.styles.moduledrawers import *
 
 from qr import generate_qr
@@ -12,7 +13,9 @@ class MainWindow(Tk):
     module_driver = SquareModuleDrawer()
     back_color = (255, 255, 255)
     fill_color = (0, 0, 0)
-
+    gradiant_color = (0, 0, 0)
+    color_mask = SolidFillColorMask(back_color=back_color, front_color=fill_color)
+    color_mask_value = None
     def __init__(self):
         Tk.__init__(self)
 
@@ -25,10 +28,10 @@ class MainWindow(Tk):
         self.font_font8 = ("Cascadia Code", 8)
 
         self.title('QR Генератор')
-        self.geometry('650x350')
+        self.geometry('1550x670')
         self['bg'] = self.win_bg
 
-        self.dark_in_the_center = Label(bg='#141414', width=104, height=60)
+        self.dark_in_the_center = Label(bg='#141414', width=104, height=45)
         self.dark_in_the_center.place(x=400, y=0)
 
         self.qr_panel = Canvas(bg=self.canvas_bg, borderwidth=0, bd=0, width=500, height=500,
@@ -37,7 +40,7 @@ class MainWindow(Tk):
 
         self.save_button = Button(bg=self.element_bg, fg=self.font_color, bd=0, font=self.font_font12,
                                   text='Сохранить...', command=self.save_button_click)
-        self.save_button.place(x=900, y=620)
+        self.save_button.place(x=890, y=600)
 
         self.data_text_label = Label(bg=self.win_bg, text="Текст или ссылка", fg=self.font_color, font=self.font_font12)
         self.data_text_label.place(x=1160, y=10)
@@ -46,13 +49,13 @@ class MainWindow(Tk):
         self.text_box.bind("<KeyRelease>", self.on_modified_text)
         self.text_box.place(x=1160, y=40)
 
-        self.data_img_label = Label(bg=self.win_bg, text="Загрузите логотип или выберите из доступных",
-                                    fg=self.font_color, font=self.font_font10)
+        self.data_img_label = Label(bg=self.win_bg, text="Загрузите или выберите логотип",
+                                    fg=self.font_color, font=self.font_font12)
         self.data_img_label.place(x=1160, y=140)
 
-        self.img_panel = Canvas(bg=self.element_bg, width=330, height=70,
+        self.img_panel = Canvas(bg=self.element_bg, width=70, height=70,
                                 highlightthickness=0, highlightbackground=self.font_color)
-        self.img_panel.place(x=1160, y=170)
+        self.img_panel.place(x=1280, y=170)
         # Кнопки-логотипы
         vk = ImageTk.PhotoImage(Image.open('images/VK.png').resize((40, 40)))
 
@@ -91,7 +94,7 @@ class MainWindow(Tk):
 
         self.load_image_button = Button(bg=self.element_bg, fg=self.font_color, bd=0, font=self.font_font12,
                                         text='Загрузить...', command=self.load_image_button_click)
-        self.load_image_button.place(x=1380, y=330)
+        self.load_image_button.place(x=1370, y=330)
 
         self.settings_label = Label(bg=self.win_bg, text="Расширенные настроки", fg=self.font_color,
                                     font=("Cascadia Code", 15))
@@ -156,10 +159,37 @@ class MainWindow(Tk):
         self.fill_color_button = Button(bd=2, width=5, height=2, bg='#000', command=self.fill_color_button_click)
         self.fill_color_button.place(x=275, y=193)
 
+        self.color_mask_value = IntVar()
+        self.color_mask_value.set(1)
+        self.SolidFillColorMask_radio = Radiobutton(text="Два цвета", bg=self.win_bg, fg=self.font_color, selectcolor='black', variable=self.color_mask_value, value=1, command=self.change_color_mask)
+        self.SolidFillColorMask_radio.place(x=20, y=220)
+        self.RadialGradiantColorMask_radio = Radiobutton(text="Радиальный", bg=self.win_bg, fg=self.font_color, selectcolor='black', variable=self.color_mask_value, value=2, command=self.change_color_mask)
+        self.RadialGradiantColorMask_radio.place(x=20, y=240)
+        self.SquareGradiantColorMask_radio = Radiobutton(text="Квадратный", bg=self.win_bg, fg=self.font_color, selectcolor='black', variable=self.color_mask_value, value=3, command=self.change_color_mask)
+        self.SquareGradiantColorMask_radio.place(x=20, y=260)
+        self.HorizontalGradiantColorMask_radio = Radiobutton(text="Горизонтальный", bg=self.win_bg, fg=self.font_color, selectcolor='black', variable=self.color_mask_value, value=4, command=self.change_color_mask)
+        self.HorizontalGradiantColorMask_radio.place(x=20, y=280)
+        self.VerticalGradiantColorMask_radio = Radiobutton(text="Вертикальный", bg=self.win_bg, fg=self.font_color, selectcolor='black', variable=self.color_mask_value, value=5, command=self.change_color_mask)
+        self.VerticalGradiantColorMask_radio.place(x=20, y=300)
+
+        self.gradiant_color_label = Label(bg=self.win_bg, text="Цвет 2", fg=self.font_color, font=self.font_font8)
+        self.gradiant_color_label.place(x=180, y=260)
+
+        self.gradiant_color_button = Button(bd=2, width=5, height=2, bg='#000', command=self.gradiant_color_button_click)
+        self.gradiant_color_button.place(x=275, y=260)
+
         self.mainloop()
 
     def change_logo(self, logo_path):
         self.logo_img = logo_path
+        self.update_qr()
+
+    def change_color_mask(self):
+        val = self.color_mask_value.get()
+        if val == 1:
+            self.color_mask = SolidFillColorMask(back_color=self.back_color, front_color=self.fill_color)
+        elif val == 2:
+            self.color_mask = RadialGradiantColorMask(back_color=self.back_color, center_color=self.fill_color, edge_color=self.gradiant_color)
         self.update_qr()
 
     def change_module_driver(self, driver_name):
@@ -179,10 +209,14 @@ class MainWindow(Tk):
 
     def update_qr(self):
         img = generate_qr(self.text_box.get("1.0", END), module_driver=self.module_driver,
-                          fill_color_param=self.fill_color, back_color_param=self.back_color, image=self.logo_img)
+                          color_mask=self.color_mask, image=self.logo_img)
         img = img.resize((500, 500))
         img = ImageTk.PhotoImage(img)
         self.qr_panel.create_image(0, 0, anchor=NW, image=img)
+        if self.logo_img is not None:
+            logo = Image.open(self.logo_img).resize((70, 70))
+            logo = ImageTk.PhotoImage(logo)
+            self.img_panel.create_image(0, 0, anchor=NW, image=logo)
 
     def on_modified_text(self, event):
         self.update_qr()
@@ -190,8 +224,10 @@ class MainWindow(Tk):
     def save_button_click(self):
         file_name = filedialog.asksaveasfilename(defaultextension='.png', filetypes=[('PNG', '.png'), ('JPG', '.jpg'),
                                                                                      ('BMP', '.bmp')])
-        generate_qr(self.text_box.get("1.0", END), module_driver=self.module_driver,
-                    fill_color_param=self.fill_color, back_color_param=self.back_color, image=self.logo_img).save(file_name)
+        if file_name is not None:
+            generate_qr(self.text_box.get("1.0", END), module_driver=self.module_driver,
+                        color_mask=self.color_mask, image=self.logo_img).save(file_name)
+            self.update_qr()
 
     def load_image_button_click(self):
         file_name = filedialog.askopenfilename(filetypes=[("Файлы изображений", '.png .jpg .jpeg')])
@@ -209,4 +245,10 @@ class MainWindow(Tk):
         (rgb, hex) = colorchooser.askcolor()
         self.fill_color_button.configure(bg=hex)
         self.fill_color = rgb
+        self.update_qr()
+
+    def gradiant_color_button_click(self):
+        (rgb, hex) = colorchooser.askcolor()
+        self.gradiant_color_button.configure(bg=hex)
+        self.gradiant_color = rgb
         self.update_qr()
