@@ -1,7 +1,6 @@
 import qrcode
 from PIL import Image
 from qrcode.image.styledpil import StyledPilImage
-from qrcode.image.styles.colormasks import SolidFillColorMask
 
 
 def generate_qr(data, module_driver, color_mask, image):
