@@ -42,7 +42,7 @@ class MainWindow(Tk):
 
         self.save_button = Button(bg=self.element_bg, fg=self.font_color, bd=0, font=self.font_font12,
                                   text='Сохранить...', command=self.save_button_click)
-        self.save_button.place(x=590, y=500)
+        self.save_button.place(x=800, y=450)
 
         self.data_text_label = Label(bg=self.win_bg, text="Текст или ссылка:", fg=self.font_color,
                                      font=("Cascadia Code", 15))
