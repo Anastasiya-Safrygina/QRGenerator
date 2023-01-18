@@ -18,6 +18,7 @@ class MainWindow(Tk):
     color_mask_value = None
 
     def __init__(self):
+        # Вызов базового конструктора (Мы наследуемся от Tk)
         Tk.__init__(self)
 
         self.win_bg = '#212121'
@@ -262,23 +263,23 @@ class MainWindow(Tk):
         self.update_qr()
 
     def save_button_click(self):
-        file_name = filedialog.asksaveasfilename(defaultextension='.png', filetypes=[('PNG', '.png'),
+        file = filedialog.asksaveasfile(defaultextension='.png', filetypes=[('PNG', '.png'),
                                                                                      ('JPG', '.jpg'),
                                                                                      ('BMP', '.bmp')])
-        if file_name is not None:
+        if file is not None:
             generate_qr(self.text_box.get("1.0", END), module_driver=self.module_driver,
-                        color_mask=self.color_mask, image=self.logo_img).save(file_name)
+                        color_mask=self.color_mask, image=self.logo_img).save(file.name)
 
     def load_image_button_click(self):
-        file_name = filedialog.askopenfilename(filetypes=[("Файлы изображений", '.png .jpg .jpeg')])
-        if file_name is not None:
-            self.logo_img = file_name
+        file = filedialog.askopenfile(filetypes=[("Файлы изображений", '.png .jpg .jpeg')])
+        if file is not None:
+            self.logo_img = file.name
             self.update_qr()
 
     def back_color_button_click(self):
         (rgb, hex) = colorchooser.askcolor()
         self.back_color_button.configure(bg=hex)
-        self.back_color = rgb
+        self.back_color = (rgb[0] + 1, rgb[1] + 1, rgb[2] + 1)
         self.update_qr()
 
     def fill_color_button_click(self):
