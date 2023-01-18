@@ -278,18 +278,21 @@ class MainWindow(Tk):
 
     def back_color_button_click(self):
         (rgb, hex) = colorchooser.askcolor()
-        self.back_color_button.configure(bg=hex)
-        self.back_color = (rgb[0] + 1, rgb[1] + 1, rgb[2] + 1)
-        self.update_qr()
+        if rgb is not None:
+            self.back_color_button.configure(bg=hex)
+            self.back_color = (rgb[0] + 1, rgb[1] + 1, rgb[2] + 1)
+            self.update_qr()
 
     def fill_color_button_click(self):
         (rgb, hex) = colorchooser.askcolor()
-        self.fill_color_button.configure(bg=hex)
-        self.fill_color = rgb
-        self.update_qr()
+        if rgb is not None:
+            self.fill_color_button.configure(bg=hex)
+            self.fill_color = rgb
+            self.update_qr()
 
     def gradiant_color_button_click(self):
         (rgb, hex) = colorchooser.askcolor()
-        self.gradiant_color_button.configure(bg=hex)
-        self.gradiant_color = rgb
-        self.update_qr()
+        if rgb is not None:
+            self.gradiant_color_button.configure(bg=hex)
+            self.gradiant_color = rgb
+            self.update_qr()
